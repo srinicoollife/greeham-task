@@ -49,7 +49,7 @@ export default function App() {
                 fontWeight: '500'      
               },
               headerBackTitleVisible: false,
-              headerBackImage: () => (<BackImage/>)
+              headerBackImage: () => (<BackImage/>)             
             }}
           />
         </RootStack.Navigator>
@@ -63,6 +63,12 @@ const BackImage = () => {
     <View style={{paddingLeft: 22}}>
       <Image source={icon_back} style={{width: 20, height: 14}}></Image>
     </View>
+  )
+}
+
+const SaveButton = () => {
+  return(
+    <Text style={{color: "#008000", fontWeight: "500", fontSize: 16, paddingRight: 23}}>Save</Text>
   )
 }
 
