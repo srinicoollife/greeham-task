@@ -18,11 +18,11 @@ const icon_actor = require("../../assets/icons/actor.png");
 const icon_plot = require("../../assets/icons/plot.png");
 
 const NewMovie = ({navigation, genres, selectGenre, addNewMovie, selectedGenres, clearSelectedGenres}) => {    
-    const [movieName, setmovieName] = useState("sarkar");
-    const [movieLength, setmovieLength] = useState("100");
-    const [movieYear, setmovieYear] = useState("2019");
-    const [movieActors, setmovieActors] = useState("vijay, keerthi");
-    const [moviePlot, setmoviePlot] = useState("cool film");
+    const [movieName, setmovieName] = useState("");
+    const [movieLength, setmovieLength] = useState("");
+    const [movieYear, setmovieYear] = useState("");
+    const [movieActors, setmovieActors] = useState("");
+    const [moviePlot, setmoviePlot] = useState("");
 
     const setHeaderRight = () => {	
     	navigation.setOptions({ headerRight: (props) => (<RightButton title="save" handleSave={handleSave}/>)});  		
@@ -35,17 +35,31 @@ const NewMovie = ({navigation, genres, selectGenre, addNewMovie, selectedGenres,
     }, [navigation]);    
 
     const handleSave = () => {
-        let payload = {            
-            "title": movieName,
-            "year": movieYear,
-            "runtime": movieLength,
-            "genres": selectedGenres,
-            "director": "Tim Burton",
-            "actors": movieActors,
-            "plot": moviePlot
-        };        
-        addNewMovie(payload);
-        navigation.goBack();        
+        if(!movieName.trim().length){
+            alert("please fill in Movie Name")
+        } else if(!movieLength.trim().length){
+            alert("please fill in Movie Length")
+        } else if(!movieYear.trim().length){
+            alert("please fill in Movie Year")
+        } else if(!selectedGenres.length){
+            alert("please select a Genre")
+        } else if(!movieActors.trim().length){
+            alert("please fill in Actors")
+        } else if(!moviePlot.trim().length){
+            alert("please fill in Movie Plot")
+        } else{        
+            let payload = {            
+                "title": movieName,
+                "year": movieYear,
+                "runtime": movieLength,
+                "genres": selectedGenres,
+                "director": "Tim Burton",
+                "actors": movieActors,
+                "plot": moviePlot
+            };        
+            addNewMovie(payload);
+            navigation.goBack();   
+        }     
     }
 
     return ( 
