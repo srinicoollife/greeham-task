@@ -7,6 +7,8 @@ import {
     OutlinedTextField,
 } from 'react-native-material-textfield';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { selectGenre, clearSelectedGenres, addNewMovie } from "../actions/action";
 import Badge from "../components/badge";
 
 const icon_length = require("../../assets/icons/length.png");
@@ -15,39 +17,75 @@ const icon_year = require("../../assets/icons/year.png");
 const icon_actor = require("../../assets/icons/actor.png");
 const icon_plot = require("../../assets/icons/plot.png");
 
-const NewMovie = ({navigation, genres}) => {        
-    useEffect(() => {
-        setHeaderRight();
-    }, []);
+const NewMovie = ({navigation, genres, selectGenre, addNewMovie, selectedGenres, clearSelectedGenres}) => {    
+    const [movieName, setmovieName] = useState("sarkar");
+    const [movieLength, setmovieLength] = useState("100");
+    const [movieYear, setmovieYear] = useState("2019");
+    const [movieActors, setmovieActors] = useState("vijay, keerthi");
+    const [moviePlot, setmoviePlot] = useState("cool film");
 
     const setHeaderRight = () => {	
-    	navigation.setOptions({ headerRight: (props) => <RightButton handleSave={handleSave} title="Save"/> });  		
+    	navigation.setOptions({ headerRight: (props) => (<RightButton title="save" handleSave={handleSave}/>)});  		
 	}  
+    setHeaderRight();
+
+    React.useEffect(() => {
+        const unsubscribe = navigation.addListener('beforeRemove', () => clearSelectedGenres());
+        return unsubscribe;
+    }, [navigation]);    
 
     const handleSave = () => {
-        
+        let payload = {            
+            "title": movieName,
+            "year": movieYear,
+            "runtime": movieLength,
+            "genres": selectedGenres,
+            "director": "Tim Burton",
+            "actors": movieActors,
+            "plot": moviePlot
+        };        
+        addNewMovie(payload);
+        navigation.goBack();        
     }
+
     return ( 
         <KeyboardAwareScrollView style={styles.container}>
             <TextField              
-              autoCapitalize={false}
+              autoCapitalize={"none"}
               returnKeyType="next"
-              label="Movie Name"                 
+              label="Movie Name"
+              value={movieName}
+              onChangeText={(value) => setmovieName(value)}                 
             />       
             <View style={{paddingTop: 13, paddingBottom: 46}}>
                 <MovieInput label="Length" icon={icon_length}>
-                    <TextInput keyboardType="numeric" maxLength="3" style={{width: 100, fontSize: 14, fontWeight: '500'}} placeholder="xxx"></TextInput>
+                    <TextInput 
+                    keyboardType="numeric" 
+                    maxLength={3}
+                    style={{width: 100, fontSize: 14, fontWeight: '500'}}
+                    placeholder="xxx"
+                    value={movieLength}
+                    onChangeText={(value) => setmovieLength(value)}
+                    >                        
+                    </TextInput>
                 </MovieInput>
                 <MovieInput label="Year" icon={icon_year}>
-                    <TextInput keyboardType="numeric" maxLength="4" style={{width: 100, fontSize: 14, fontWeight: '500'}} placeholder="xxxx"></TextInput>
+                    <TextInput
+                    keyboardType="numeric"
+                    maxLength={4}
+                    style={{width: 100, fontSize: 14, fontWeight: '500'}}
+                    placeholder="xxxx"
+                    value={movieYear}
+                    onChangeText={(value) => setmovieYear(value)}
+                ></TextInput>
                 </MovieInput>
                 <View style={{borderColor: "#EDF2F7", borderBottomWidth: 4, paddingVertical: 15}}>            
                     <View style={{flexDirection: "row", alignItems: "center"}}>
                         <Image source={icon_genre} style={{width: 24, height: 24}}></Image>                        
-                        <Text style={styles.label}>Genre</Text>            
+                        <Text style={styles.label}>Genre {selectedGenres.length}</Text>            
                     </View>
                     <View style={{flexDirection: "row", flexWrap: "wrap", paddingTop: 15}}>
-                        {genres.map(genre => (<Badge label={genre}/>))}
+                        {genres.map((genre, index) => (<Badge key={index} label={genre} onSelect={selectGenre}/>))}
                     </View>
                 </View>
 
@@ -57,9 +95,11 @@ const NewMovie = ({navigation, genres}) => {
                         <Text style={styles.label}>Actors</Text>                        
                     </View>                                                
                     <TextField              
-                        autoCapitalize={false}
+                        autoCapitalize={"none"}
                         returnKeyType="next"
-                        placeholder="Enter Actor Name"                 
+                        placeholder="Enter Actor Name"
+                        value={movieActors}
+                        onChangeText={(value) => setmovieActors(value)}                 
                     />                                                                            
                 </View>
 
@@ -68,7 +108,14 @@ const NewMovie = ({navigation, genres}) => {
                         <Image source={icon_plot} style={{width: 24, height: 24}}></Image>                        
                         <Text style={styles.label}>Plot</Text>            
                     </View>
-                    <TextInput multiline={true} textAlignVertical="top" style={{ height: 100}} placeholder="Type in description of movie">                        
+                    <TextInput
+                    multiline={true}
+                    textAlignVertical="top"
+                    style={{ height: 100}}
+                    placeholder="Type in description of movie"
+                    value={moviePlot}
+                    onChangeText={(value) => setmoviePlot(value)}                 
+                    >                        
                     </TextInput>
                 </View>
                 
@@ -120,8 +167,16 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
     const { app } = state;
-    const { genres } = app;    
-    return { genres }
-  };
-  
-export default connect(mapStateToProps, {})(NewMovie);
+    const { genres, selectedGenres } = app;    
+    return { genres, selectedGenres }
+};
+
+const mapDispatchToProps = dispatch => (
+    bindActionCreators({
+        selectGenre,
+        clearSelectedGenres,
+        addNewMovie
+    }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewMovie);
