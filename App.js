@@ -19,20 +19,25 @@ const store = createStore(appReducer);
 //navigator
 const RootStack = createStackNavigator();
 
+const screenOptions = { 
+  headerStyle: {
+    backgroundColor: "#c6c6cc"             
+  },
+  headerTitleAlign: "left"
+}
+
 export default function App() {
   return (
     <Provider store={store}>
     <NavigationContainer>
-      <RootStack.Navigator>        
+      <RootStack.Navigator screenOptions={screenOptions}>        
         <RootStack.Screen 
             name="movieList" 
             component={MovieList}
-            options={{              
-              title: "Movie List",
-              headerTitleAlign: "left",              
+            options={{                   
+              title: "Movie List",                            
               headerTitleStyle: {                
-                fontSize: 20,                
-                color: "#000000",                
+                fontSize: 20,                              
                 fontWeight: '500'      
               }
             }}
@@ -41,11 +46,9 @@ export default function App() {
             name="newMovie" 
             component={NewMovie}
             options={{              
-              title: "Add a new Movie",
-              headerTitleAlign: "left",
+              title: "Add a new Movie",              
               headerTitleStyle: {                
-                fontSize: 16,                
-                color: "#000000",                
+                fontSize: 16,                                               
                 fontWeight: '500'      
               },
               headerBackTitleVisible: false,
@@ -71,12 +74,3 @@ const SaveButton = () => {
     <Text style={{color: "#008000", fontWeight: "500", fontSize: 16, paddingRight: 23}}>Save</Text>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
